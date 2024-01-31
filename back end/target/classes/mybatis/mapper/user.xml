@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.user.UserMapper">
+    <select id="getuser" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+        select `id`, `email`, `avatar`, `name`
+        from user
+        where password = #{password}
+          and email = #{email}
+    </select>
+    <select id="getusers" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+        select `id`, `email`, `avatar`, `name`
+        from user
+    </select>
+    <update id="updateuser" parameterType="java.util.HashMap">
+        update user
+        <set>
+            <if test="email != null">
+                email = #{email},
+            </if>
+
+            <if test="password != null">
+                password = #{password},
+            </if>
+
+            <if test="avatar != null">
+                avatar = #{avatar},
+            </if>
+
+            <if test="name != null">
+                `name` = #{name}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <delete id="deleteuser" parameterType="java.util.HashMap">
+        delete
+        from user
+        where id = #{id}
+    </delete>
+    <insert id="adduser" parameterType="java.util.HashMap">
+        insert into user (email, password, avatar, `name`)
+        values (#{email}, #{password}, #{avatar}, #{name})
+    </insert>
+
+    <select id="getcomment" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        select *
+        from comment
+    </select>
+    <update id="updatecomment" parameterType="java.util.HashMap">
+        update comment
+        <set>
+            <if test="restaurant_id != null">
+                restaurant_id = #{restaurant_id},
+            </if>
+
+            <if test="user_id != null">
+                user_id = #{user_id},
+            </if>
+
+            <if test="context != null">
+                context = #{context},
+            </if>
+
+            <if test="create_time != null">
+                create_time = #{create_time},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <delete id="deletecomment" parameterType="java.util.HashMap">
+        delete
+        from comment
+        where id = #{id}
+    </delete>
+    <insert id="addcomment" parameterType="java.util.HashMap">
+        insert into comment (restaurant_id, user_id, context, create_time)
+        values (#{restaurant_id}, #{user_id}, #{context}, #{create_time})
+    </insert>
+    <select id="getrestaurant" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        select *
+        from restaurant
+    </select>
+    <update id="updaterestaurant" parameterType="java.util.HashMap">
+        update restaurant
+        <set>
+            <if test="cuisine != null">
+                cuisine = #{cuisine},
+            </if>
+
+            <if test="name != null">
+                name = #{name},
+            </if>
+
+            <if test="images != null">
+                images = #{images},
+            </if>
+
+            <if test="close_time != null">
+                close_time = #{close_time},
+            </if>
+
+            <if test="open_time != null">
+                open_time = #{open_time},
+            </if>
+
+            <if test="average_price != null">
+                average_price = #{average_price},
+            </if>
+
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+
+            <if test="lng != null">
+                lng = #{lng},
+            </if>
+
+            <if test="lat != null">
+                lat = #{lat},
+            </if>
+
+            <if test="tags != null">
+                tags = #{tags},
+            </if>
+
+            <if test="address != null">
+                address = #{address}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <delete id="deleterestaurant" parameterType="java.util.HashMap">
+        delete
+        from restaurant
+        where id = #{id}
+    </delete>
+    <insert id="addrestaurant" parameterType="java.util.HashMap">
+        insert into restaurant (cuisine, name, images, close_time, open_time, average_price, phone, lng, lat, tags,
+                                address)
+        values (#{cuisine}, #{name}, #{images}, #{close_time}, #{open_time}, #{average_price}, #{phone}, #{lng}, #{lat},
+                #{tags}, #{address})
+    </insert>
+</mapper>

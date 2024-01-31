@@ -1,0 +1,115 @@
+<template>
+	<view class="page">
+		<map :scale="15" :markers='markers' :show-location="true" :longitude="longitude" :latitude="latitude"
+			style="width: 750rpx;" :style="{height:h}" @markertap='markertClick' @regionchange='regionchange'></map>
+		<view class="box" :class="{show:point.id}"
+			style="position: fixed;left: 0;padding: 30px 0;display: flex;flex-direction: row;background-color: #fff;width: 750rpx;padding-top: 50px;"
+			@click="toRestaurant(point.id)">
+			<image style="width: 100px;height: 100px;border-radius: 12px;margin-left: 20px;" :src="point.images"></image>
+			<view style="margin-left: 20px;">
+				<text style="font-weight: bold;font-size: 14px;margin-bottom: 15px;">{{point.name}}</text>
+				<text style="font-size: 12px;margin-bottom: 10px;">{{point.cuisine}}</text>
+				<text style="font-size: 12px;margin-bottom: 10px;">{{point.open_time}}</text>
+				<text style="font-size: 12px;margin-bottom: 10px;">{{point.km}}km away</text>
+			</view>
+		</view>
+	</view>
+</template>
+
+<style>
+	.box {
+		transition-property: top;
+		transition-duration: .3s;
+		transition-delay: 0s;
+		transition-timing-function: ease-in-out;
+		top: -200px;
+	}
+
+	.show {
+		top: 0;
+	}
+</style>
+
+<script>
+	import http from '@/common/vmeitime-http'
+	export default {
+		data() {
+			return {
+				markers: [],
+				latitude: '',
+				longitude: '',
+				h: "700px",
+				list: [],
+				point: {}
+			};
+		},
+		onShow() {
+			this.getMap();
+			const {
+				safeArea
+			} = uni.getSystemInfoSync()
+			this.h = `${safeArea.height+40}px`
+		},
+		methods: {
+			regionchange(event) {
+				if (event.type == 'begin') {
+					this.point = {}
+				}
+			},
+			toRestaurant(id) {
+				uni.navigateTo({
+					url: '../merchant/merchant?id=' + id
+				});
+			},
+			getMap() {
+				uni.getLocation({
+					type: 'wgs84',
+					success: (res) => {
+						this.latitude = res.latitude
+						this.longitude = res.longitude
+						console.log(res);
+						this.loadData()
+					}
+				})
+			},
+			// Calculate the distance according to the latitude and longitude, the parameters are the latitude and longitude of the first point; the latitude and longitude of the second point
+			getDistance(lat1, lng1, lat2, lng2) {
+				// The latitude and longitude are converted into trigonometric medium-degree subscale form.
+				const rad = (d) => {
+					return d * Math.PI / 180.0;
+				}
+				var radLat1 = rad(lat1);
+				var radLat2 = rad(lat2);
+				var a = radLat1 - radLat2;
+				var b = rad(lng1) - rad(lng2);
+				var s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) +
+					Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b / 2), 2)));
+				s = s * 6378.137; // EARTH_RADIUS;
+				s = Math.round(s * 10000) / 10000; //Output in kilometers
+				return s.toFixed(2);
+			},
+			markertClick(event) {
+				const point = this.list.find(e => e.id == event.detail.markerId)
+				console.log(point);
+				this.point = point
+			},
+			loadData() {
+				http.post('/getrestaurant').then(data => {
+					let dataList = data.restaurant;
+					this.list = dataList.map(e => ({
+						...e,
+						km: this.getDistance(e.lat, e.lng, this.latitude, this.longitude),
+					}))
+					this.markers = dataList.map(e => ({
+						id: e.id,
+						latitude: e.lat,
+						longitude: e.lng,
+						title: e.name,
+						icon: '/static/pos.png'
+					}))
+				})
+			},
+
+		}
+	};
+</script>

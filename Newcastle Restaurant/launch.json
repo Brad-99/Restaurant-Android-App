@@ -1,0 +1,20 @@
+{
+    // launch.json configures settings related to debugging at launch, The node name under configurations can be app-plus/h5/mp-weixin/mp-baidu/mp-alipay/mp-qq/mp-toutiao/mp-360/
+    // The launchtype item can be configured with the value local or remote, local represents the front-end connected to the local cloud function, remote represents the front-end connected to the cloud cloud function
+    "version" : "0.0",
+    "configurations" : [
+        {
+            "app-plus" : {
+                "launchtype" : "local"
+            },
+            "default" : {
+                "launchtype" : "local"
+            },
+            "type" : "uniCloud"
+        },
+        {
+            "playground" : "custom",
+            "type" : "uni-app:app-android"
+        }
+    ]
+}

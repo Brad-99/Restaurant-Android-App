@@ -1,0 +1,4 @@
+com\example\demo\DemoApplication.class
+com\example\demo\user\UserService.class
+com\example\demo\user\Usercontroller.class
+com\example\demo\user\UserMapper.class

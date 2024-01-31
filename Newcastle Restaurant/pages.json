@@ -1,0 +1,98 @@
+{
+	"pages": [ 
+		{
+			"path": "pages/start/start",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/index/index",
+			"style": {
+				"enablePullDownRefresh": false,
+				"navigationBarTitleText": "Newcastle Restaurant",
+				"onReachBottomDistance": 50,
+				"app-plus": {
+					"background": "#ffffff"
+				}
+			}
+		},
+		{
+			"path": "pages/user/user",
+			"style": {
+				"navigationBarTitleText": "my"
+			}
+		},
+		{
+			"path": "pages/map/map",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/merchant/merchant",
+			"style": {
+				"navigationBarTitleText": "Restaurant Details",
+				"enablePullDownRefresh": true,
+				"app-plus": {
+					"background": "#ffffff"
+				}
+			}
+		}, {
+			"path": "pages/comment/comment",
+			"style": {
+				"navigationBarTitleText": "Comment",
+				"enablePullDownRefresh": false
+			}
+		}, {
+			"path": "pages/signup/signup",
+			"style": {
+				"navigationStyle": "custom"
+			}
+
+		}, {
+			"path": "pages/addComment/addComment",
+			"style": {
+				"navigationBarTitleText": "Comment Restaurant",
+				"enablePullDownRefresh": false
+			}
+
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar": {
+		"color": "#333333",
+		"selectedColor": "#5e8685",
+		"borderStyle": "#cedada",
+		"backgroundColor": "#ffffff",
+		"list": [{
+				"pagePath": "pages/index/index",
+				"iconPath": "/static/home.png",
+				"selectedIconPath": "/static/homefill.png",
+				"text": "home"
+			},
+			{
+				"pagePath": "pages/map/map",
+				"iconPath": "/static/map.png",
+				"selectedIconPath": "/static/mapfill.png",
+				"text": "map"
+			},
+			{
+				"pagePath": "pages/user/user",
+				"iconPath": "/static/my.png",
+				"selectedIconPath": "/static/myfill.png",
+				"text": "my"
+			}
+		]
+	}
+}

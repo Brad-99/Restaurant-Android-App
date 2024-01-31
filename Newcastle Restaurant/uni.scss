@@ -1,0 +1,63 @@
+
+
+
+/* Behavior-related colors */
+$uni-color-primary: #007aff;
+$uni-color-success: #4cd964;
+$uni-color-warning: #f0ad4e;
+$uni-color-error: #dd524d;
+
+/* Basic text color */
+$uni-text-color:#333;//Basic Colors
+$uni-text-color-inverse:#fff;//Anti-color
+$uni-text-color-grey:#999;//Auxiliary gray, such as loading more tips
+$uni-text-color-placeholder: #808080;
+$uni-text-color-disable:#c0c0c0;
+
+/* Background color */
+$uni-bg-color:#ffffff;
+$uni-bg-color-grey:#f8f8f8;
+$uni-bg-color-hover:#f1f1f1;//Click on the status color
+$uni-bg-color-mask:rgba(0, 0, 0, 0.4);//Mask color
+
+/* Border color */
+$uni-border-color:#c8c7cc;
+
+/* Dimensional Variables */
+
+/* Text Size */
+$uni-font-size-sm:24rpx;
+$uni-font-size-base:28rpx;
+$uni-font-size-lg:32rpx;
+
+/* Image size */
+$uni-img-size-sm:40rpx;
+$uni-img-size-base:52rpx;
+$uni-img-size-lg:80rpx;
+
+/* Border Radius */
+$uni-border-radius-sm: 4rpx;
+$uni-border-radius-base: 6rpx;
+$uni-border-radius-lg: 12rpx;
+$uni-border-radius-circle: 50%;
+
+/* Horizontal spacing */
+$uni-spacing-row-sm: 10px;
+$uni-spacing-row-base: 20rpx;
+$uni-spacing-row-lg: 30rpx;
+
+/* Vertical Pitch */
+$uni-spacing-col-sm: 8rpx;
+$uni-spacing-col-base: 16rpx;
+$uni-spacing-col-lg: 24rpx;
+
+/* Transparency */
+$uni-opacity-disabled: 0.3; // Transparency of the component disable state
+
+/* Article Scene Related */
+$uni-color-title: #2C405A; // Article Title Color
+$uni-font-size-title:40rpx;
+$uni-color-subtitle: #555555; // Secondary header color
+$uni-font-size-subtitle:36rpx;
+$uni-color-paragraph: #3F536E; // Article Paragraph Color
+$uni-font-size-paragraph:30rpx;

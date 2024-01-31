@@ -1,0 +1,312 @@
+<template>
+	<view>
+
+		<view class="bg-white mtop roll_text">
+			<view class="flex"
+				style="flex-direction: row;justify-content: space-between;padding: 10px 20px 10px 10px;align-items: center;"
+				@click="selectCuisine">
+				<text style="font-size: 18px;font-weight: bold;color: #000;">Different Cuisine</text>
+				<text style="font-size: 14px;color:#8eaaa9;font-weight: bold;">{{cuisine}}</text>
+			</view>
+
+		</view>
+
+		<view class="mtop" style="padding: 0 10px;">
+			<view style="display: flex;flex-direction: row;align-items: baseline;">
+				<text style="font-size: 17px;font-weight: bold;">{{nearby?'Nearby':'The Most Popular'}}</text>
+				<text style="font-size: 14px;color: #999;margin-left: 10px;"
+					@click="changeNearby">{{!nearby?'Nearby':'The Most Popular'}}</text>
+			</view>
+			<view @click="toMerchant(item)" style="width: 710rpx;margin-top: 10px;" v-for="(item,index) in dataList"
+				:key='index'>
+				<image class="image" mode="widthFix" :src="item.logo" style="width: 700rpx;border-radius: 16px;"></image>
+				<view @click="toMerchant(item)" style="flex:1;margin-top: 10px;padding: 10px;border-bottom: 1px solid #8eaaa9;">
+					<text style="font-size: 16px;font-weight: bold;">{{item.name}}</text>
+					<view style="display: flex;flex-direction: row;margin-top: 10px;align-items: center;">
+						<image src="/static/position-fill.png" style="width:20px;margin-right: 10px;" mode="widthFix"></image>
+						<text style="font-size: 14px;color:#8eaaa9">{{item.address}}</text>
+					</view>
+					<view style="display: flex;flex-direction: row;margin-top: 10px;align-items: center;">
+						<image src="/static/canpan-xianding.png" style="width:20px;margin-right: 10px;" mode="widthFix"></image>
+						<text style="font-size: 14px;color:#8eaaa9">{{item.cuisine}}</text>
+					</view>
+					<view style="display: flex;flex-direction: row;align-items: center;margin-top: 10px;">
+						<image src="/static/buxing.png" style="width:20px;margin-right: 10px;" mode="widthFix"></image>
+						<text style="color:#8eaaa9;font-size: 14px;">{{item.km}}km away</text>
+					</view>
+				</view>
+			</view>
+		</view>
+		<uni-load-more :showText="false" :status="status"
+			:contentText='{contentdown: "Pull up to display more",contentrefresh: "Loading...",contentnomore: "No more data"}'></uni-load-more>
+
+	</view>
+</template>
+
+<script>
+	import uniLoadMore from "@/components/uni-load-more/uni-load-more.vue"
+	import util from '../../util.js'
+	import http from '@/common/vmeitime-http'
+	export default {
+		onShareAppMessage(res) {
+			return {
+				path: '/pages/index/index'
+			}
+		},
+		components: {
+			uniLoadMore
+		},
+		data() {
+			return {
+				markers: [],
+				dataList: [],
+				cuisineList: [],
+				latitude: '',
+				longitude: '',
+				cuisine: 'All',
+				status: 'more',
+				nearby: false
+			}
+		},
+		onLoad() {
+			this.getMap();
+			this.getCuisineList()
+			this.loadData('reload');
+		},
+		onPullDownRefresh() {
+			this.loadData('reload');
+			uni.stopPullDownRefresh();
+		},
+		onReachBottom() {
+			this.loadData();
+		},
+		methods: {
+			async getCuisineList() {
+				let data = await http.post('/getrestaurant')
+				let dataList = data.restaurant;
+				this.cuisineList = Array.from(new Set(["All", ...dataList.map(e => e.cuisine)]))
+			},
+			selectCuisine() {
+				uni.showActionSheet({
+					itemList: this.cuisineList,
+					success: (res) => {
+						this.cuisine = this.cuisineList[res.tapIndex]
+						this.loadData('reload');
+					}
+				})
+			},
+			changeNearby() {
+				this.nearby = !this.nearby
+				this.loadData('reload')
+			},
+			toMerchant(row) {
+				uni.navigateTo({
+					url: '../merchant/merchant?id=' + row.id
+				});
+			},
+			getMap() {
+				uni.getLocation({
+					type: 'wgs84',
+					success: (res) => {
+						this.latitude = res.latitude
+						this.longitude = res.longitude
+						console.log(res);
+						this.loadData('reload')
+					}
+				})
+			},
+			async loadData(type = 'more') {
+				this.status = 'loading';
+				if (type == 'reload') {
+					this.dataList = [];
+				}
+				let data = await http.post('/getrestaurant')
+				console.log(data.restaurant);
+				let dataList = data.restaurant;
+				this.dataList = dataList.map(e => ({
+					id: e.id,
+					logo: e.images,
+					name: e.name,
+					address: e.address,
+					phone: e.phone,
+					opening_time: e.open_time,
+					closing_time: e.close_time,
+					km: this.getDistance(e.lat, e.lng, this.latitude, this.longitude),
+					...e
+				})).filter(e => this.cuisine === 'All' || this.cuisine == e.cuisine).filter(e => {
+					if (this.nearby) {
+						console.log(e.km);
+						return e.km < 2
+					}
+					return true
+				})
+
+				this.markers = this.dataList.map(e => ({
+					id: e.id,
+					latitude: e.lat,
+					longitude: e.lng,
+					title: e.name,
+					icon: '/static/pos.png'
+				}))
+				console.log(this.dataList);
+				this.status = 'noMore';
+			},
+			// Calculate the distance according to the latitude and longitude, the parameters are the latitude and longitude of the first point; the latitude and longitude of the second point
+			getDistance(lat1, lng1, lat2, lng2) {
+				// The latitude and longitude are converted into trigonometric medium-degree subscale form.
+				const rad = (d) => {
+					return d * Math.PI / 180.0;
+				}
+				var radLat1 = rad(lat1);
+				var radLat2 = rad(lat2);
+				var a = radLat1 - radLat2;
+				var b = rad(lng1) - rad(lng2);
+				var s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) +
+					Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b / 2), 2)));
+				s = s * 6378.137; // EARTH_RADIUS;
+				s = Math.round(s * 10000) / 10000; //Output in kilometers
+				return s.toFixed(2);
+			}
+		}
+	}
+</script>
+
+<style>
+	page {
+		background-color: #fff;
+	}
+
+	.navImage {
+		width: 60rpx;
+		height: 60rpx;
+		margin: 0 auto;
+		border-radius: 50%;
+	}
+
+	.cuIcon-location {
+		font-size: 30rpx;
+	}
+
+	.merchant-info .cu-tag.sm {
+		padding: 0rpx 8rpx;
+		margin-left: 5rpx;
+		top: -4rpx;
+	}
+
+	.color-red {
+		color: red;
+	}
+
+	.mer_checked {
+		color: #e54d42;
+	}
+
+	.data-item {
+		padding: 15rpx;
+		border-bottom: 1px solid #CCCCCC;
+		width: 100%;
+	}
+
+	.merchant-logo {
+		width: 23%;
+	}
+
+	.merchant-info {
+		width: 65%;
+	}
+
+	.merchant-action {
+		width: 12%;
+	}
+
+	.merchant-title {
+		font-size: 30rpx;
+		color: #000;
+		margin-left: 10rpx;
+		font-weight: 430;
+	}
+
+	.address {
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+
+	.call {
+		font-size: 60rpx;
+		color: #8dc63f;
+		margin-top: 62%;
+	}
+
+	.cuIcon-phone {
+		margin-right: 5rpx;
+	}
+
+	.cuIcon-time {
+		margin-right: 7rpx;
+	}
+
+	.merchant-title .list-icon {}
+
+	.image {
+		width: 160rpx;
+		height: 160rpx;
+		border-radius: 4rpx;
+	}
+
+	.roll_text {
+		padding: 10rpx 0rpx;
+	}
+
+	.t-center {
+		text-align: center;
+	}
+
+	.settled-bt {
+		margin-left: 20rpx;
+	}
+
+	.recomment-list {
+		border-left: 1px solid #F1F1F3;
+		border-right: 1px solid #F1F1F3;
+	}
+
+	.list-icon {
+		display: inline-block;
+		line-height: 40rpx;
+		margin-left: 10rpx;
+
+	}
+
+	.tower-swiper .tower-item {
+		transform: scale(calc(0.5 + var(--index) / 10));
+		margin-left: calc(var(--left) * 100upx - 150upx);
+		z-index: var(--index);
+	}
+
+	.content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.logo {
+		height: 200rpx;
+		width: 200rpx;
+		margin-top: 200rpx;
+		margin-left: auto;
+		margin-right: auto;
+		margin-bottom: 50rpx;
+	}
+
+	.text-area {
+		display: flex;
+		justify-content: center;
+	}
+
+	.title {
+		font-size: 36rpx;
+		color: #8f8f94;
+	}
+</style>
