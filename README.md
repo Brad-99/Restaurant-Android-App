@@ -1,6 +1,6 @@
 # Restaurant Searcher Android App
 
-Welcome to the README.md file for the Restaurant Searcher Android App project. This mobile app is specifically designed for Users in Newcastle to conveniently explore and discover local restaurants. The project is structured with a client-server architecture, dividing the development into three main parts: frontend, backend, and database.
+Welcome to the README.md file for the Restaurant Searcher Android App project. This mobile app is specifically designed for Users in Newcastle area to conveniently explore and discover local restaurants. The project is structured with a client-server architecture, dividing the development into three main parts: frontend, backend, and database.
 
 ## Architecture
 
