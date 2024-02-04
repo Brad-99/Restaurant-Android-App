@@ -1,6 +1,6 @@
 # Restaurant Searcher Android App
 
-Welcome to the README.md file for the Restaurant Searcher Android App project. This mobile app is specifically designed for Newcastle University students and staff to conveniently explore and discover local restaurants. The project is structured with a client-server architecture, dividing the development into three main parts: frontend, backend, and database.
+Welcome to the README.md file for the Restaurant Searcher Android App project. This mobile app is specifically designed for Users in Newcastle to conveniently explore and discover local restaurants. The project is structured with a client-server architecture, dividing the development into three main parts: frontend, backend, and database.
 
 ## Architecture
 
@@ -28,6 +28,7 @@ Additionally, utilities were implemented for input validation and formatting, en
 
 #### Technology Stack:
 - Java: The programming language for backend development.
+- Spring Boot
 
 #### Project Structure:
 The backend manages the interaction between the frontend and the database. The control layer receives requests from the frontend and distributes them to the appropriate processors. The response, indicating the success or failure of the request, is then processed by the service layer. The DAO layer handles data store interaction, offering functions such as "getuser" and "adduser."
